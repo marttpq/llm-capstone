@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fitness LLM Agent - FitCoach AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Prompt', sans-serif; }
+    .chat-bubble { max-width: 80%; word-break: break-word; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 flex flex-col h-screen">
+
+  <!-- Top Navigation Header -->
+  <header class="bg-slate-800/80 backdrop-blur border-b border-slate-700/60 px-6 py-4 flex items-center justify-between shadow-sm">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-xl shadow-md">
+        🏋️
+      </div>
+      <div>
+        <h1 class="text-lg font-semibold tracking-wide flex items-center gap-2">
+          Fitness LLM Agent
+          <span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-normal">ReAct Agent</span>
+        </h1>
+        <p class="text-xs text-slate-400">Powered by Gemma-4 & In-Memory RAG (bge-m3)</p>
+      </div>
+    </div>
+    <div class="flex items-center space-x-2 text-xs text-slate-400">
+      <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+      <span>System Online</span>
+    </div>
+  </header>
+
+  <!-- Main Chat Container -->
+  <main class="flex-1 flex flex-col max-w-4xl w-full mx-auto p-4 overflow-hidden">
+    
+    <!-- Messages Scroll Area -->
+    <div id="chatWindow" class="flex-1 overflow-y-auto space-y-4 pr-2 pb-4">
+      
+      <!-- Welcome Message -->
+      <div class="flex items-start space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-emerald-600/30 border border-emerald-500/30 flex items-center justify-center text-sm shrink-0">
+          🤖
+        </div>
+        <div class="chat-bubble bg-slate-800 border border-slate-700 p-4 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed text-slate-200">
+          <p class="font-medium text-emerald-400 mb-1">สวัสดีครับ! ผมคือ FitCoach AI 🏋️‍♂️</p>
+          <p>ผู้ช่วยอัจฉริยะด้านการออกกำลังกาย เวทเทรนนิ่ง และโภชนาการที่ปลอดภัยต่อข้อต่อ สามารถสอบถามเรื่อง:</p>
+          <ul class="list-disc list-inside mt-2 space-y-1 text-slate-300">
+            <li>การปรับท่าฝึกเมื่อมีอาการ <span class="text-amber-300">เจ็บข้อมือ</span> หรือ <span class="text-amber-300">เจ็บข้อศอก</span></li>
+            <li>หลักการ <span class="text-teal-300">Progressive Overload</span> เพื่อพัฒนาแรงและกล้ามเนื้อ</li>
+            <li>ความต้องการโปรตีนและแหล่งอาหาร เช่น <span class="text-sky-300">อกไก่และไข่</span></li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Quick Prompt Suggestions -->
+    <div class="py-2 flex flex-wrap gap-2 text-xs">
+      <button onclick="sendQuickPrompt('เจ็บข้อมือเล่นอกท่าไหนแทน Bench Press ได้บ้าง')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-full transition">
+        🩹 เจ็บข้อมือเล่นอกท่าไหนดี?
+      </button>
+      <button onclick="sendQuickPrompt('เจ็บข้อศอกทำท่าไหนแทน Barbell Curl')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-full transition">
+        💪 เจ็บข้อศอกเล่นหน้าแขนยังไง?
+      </button>
+      <button onclick="sendQuickPrompt('โปรตีนสร้างกล้ามเนื้อต้องกินวันละเท่าไหร่ และอกไก่ 100g มีโปรตีนกี่กรัม')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-full transition">
+        🍗 สัดส่วนโปรตีน & อกไก่
+      </button>
+    </div>
+
+    <!-- Input Bar -->
+    <form id="chatForm" onsubmit="handleSendMessage(event)" class="bg-slate-800/90 border border-slate-700 rounded-2xl p-2 flex items-center shadow-lg mt-1">
+      <input
+        type="text"
+        id="userInput"
+        placeholder="พิมพ์คำถามเกี่ยวกับการออกกำลังกายหรือโภชนาการ..."
+        autocomplete="off"
+        class="flex-1 bg-transparent px-4 py-2 text-sm text-slate-100 placeholder-slate-400 focus:outline-none"
+      />
+      <button
+        type="submit"
+        id="sendButton"
+        class="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-medium px-4 py-2 rounded-xl text-sm transition flex items-center space-x-1.5 shrink-0 shadow-md"
+      >
+        <span>ส่ง</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </button>
+    </form>
+
+  </main>
+
+  <script>
+    let currentSessionId = localStorage.getItem('fitness_session_id') || ('sess_' + Math.random().toString(36).substring(2, 9));
+    localStorage.setItem('fitness_session_id', currentSessionId);
+
+    const chatWindow = document.getElementById('chatWindow');
+    const userInput = document.getElementById('userInput');
+    const sendButton = document.getElementById('sendButton');
+
+    function scrollToBottom() {
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    function appendMessage(sender, text, isUser = false) {
+      const wrapper = document.createElement('div');
+      wrapper.className = isUser ? 'flex items-start justify-end space-x-3' : 'flex items-start space-x-3';
+
+      const avatar = document.createElement('div');
+      avatar.className = isUser 
+        ? 'w-8 h-8 rounded-lg bg-emerald-500 text-slate-950 font-bold flex items-center justify-center text-xs shrink-0 order-2'
+        : 'w-8 h-8 rounded-lg bg-emerald-600/30 border border-emerald-500/30 flex items-center justify-center text-sm shrink-0';
+      avatar.innerText = isUser ? 'You' : '🤖';
+
+      const bubble = document.createElement('div');
+      bubble.className = isUser
+        ? 'chat-bubble bg-emerald-600 text-slate-50 p-3.5 rounded-2xl rounded-tr-none shadow-sm text-sm whitespace-pre-wrap leading-relaxed order-1'
+        : 'chat-bubble bg-slate-800 border border-slate-700 p-4 rounded-2xl rounded-tl-none shadow-sm text-sm whitespace-pre-wrap leading-relaxed text-slate-200';
+      bubble.textContent = text;
+
+      wrapper.appendChild(avatar);
+      wrapper.appendChild(bubble);
+      chatWindow.appendChild(wrapper);
+      scrollToBottom();
+    }
+
+    function appendTypingIndicator() {
+      const id = 'typingIndicator_' + Date.now();
+      const wrapper = document.createElement('div');
+      wrapper.id = id;
+      wrapper.className = 'flex items-start space-x-3';
+      wrapper.innerHTML = `
+        <div class="w-8 h-8 rounded-lg bg-emerald-600/30 border border-emerald-500/30 flex items-center justify-center text-sm shrink-0">🤖</div>
+        <div class="bg-slate-800 border border-slate-700 px-4 py-3 rounded-2xl rounded-tl-none text-slate-400 text-sm flex items-center space-x-2">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span>กำลังค้นหาข้อมูลและคิดคำตอบ...</span>
+        </div>
+      `;
+      chatWindow.appendChild(wrapper);
+      scrollToBottom();
+      return id;
+    }
+
+    function removeElement(id) {
+      const elem = document.getElementById(id);
+      if (elem) elem.remove();
+    }
+
+    async function handleSendMessage(event) {
+      if (event) event.preventDefault();
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      appendMessage('user', message, true);
+      userInput.value = '';
+      userInput.disabled = true;
+      sendButton.disabled = true;
+
+      const typingId = appendTypingIndicator();
+
+      try {
+        const response = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: message, session_id: currentSessionId })
+        });
+
+        removeElement(typingId);
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          appendMessage('agent', 'ขออภัยครับ เกิดข้อผิดพลาดจากระบบ: ' + (errData.detail || response.statusText));
+          return;
+        }
+
+        const data = await response.json();
+        if (data.session_id) currentSessionId = data.session_id;
+        appendMessage('agent', data.response || 'ไม่พบคำตอบจากระบบ');
+      } catch (err) {
+        removeElement(typingId);
+        appendMessage('agent', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: ' + err.message);
+      } finally {
+        userInput.disabled = false;
+        sendButton.disabled = false;
+        userInput.focus();
+        scrollToBottom();
+      }
+    }
+
+    function sendQuickPrompt(promptText) {
+      userInput.value = promptText;
+      handleSendMessage();
+    }
+
+    window.onload = () => userInput.focus();
+  </script>
+</body>
+</html>
+

@@ -18,6 +18,7 @@ import os
 from typing import Optional
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 from openai import OpenAI
 from rag import init_knowledge_base, vector_search
@@ -71,10 +72,14 @@ def startup_event():
         print(f"Warning: Knowledge file not found at {knowledge_path}")
 
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def read_root():
-    """Health check / root status."""
-    return {"status": "ok", "message": "Fitness Assistant API is running"}
+    """Returns the frontend chat interface."""
+    html_path = os.path.join(os.path.dirname(__file__), "index.html")
+    if os.path.exists(html_path):
+        with open(html_path, "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    return HTMLResponse(content="<h1>index.html not found</h1>", status_code=404)
 
 
 @app.get("/search")
