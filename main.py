@@ -16,13 +16,14 @@ except ImportError:
 import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query
+from pydantic import BaseModel, Field
 from openai import OpenAI
-from rag import init_knowledge_base, vector_search, generate_rag_response
-from schemas import RAGQueryRequest, RAGQueryResponse
+from rag import init_knowledge_base, vector_search
+from agent import run_fitness_agent
 
 load_dotenv()
 
-app = FastAPI(title="Fitness Assistant API with Lightweight RAG")
+app = FastAPI(title="Fitness Assistant API - ReAct Agent with Function Calling")
 
 # Initialize OpenAI client with environment settings
 client = OpenAI(
@@ -31,10 +32,23 @@ client = OpenAI(
 )
 
 
+class ChatRequest(BaseModel):
+    message: str = Field(
+        ...,
+        min_length=1,
+        description="User question or prompt for the fitness agent",
+        examples=["เจ็บข้อมือเล่นอกท่าไหนดี"],
+    )
+
+
+class ChatResponse(BaseModel):
+    response: str
+
+
 @app.on_event("startup")
 def startup_event():
     """
-    Startup event: Load knowledge.txt and compute chunk embeddings into memory once.
+    Startup event: Load knowledge.txt and compute chunk embeddings (bge-m3) into memory once.
     """
     knowledge_path = os.path.join(os.path.dirname(__file__), "knowledge.txt")
     if os.path.exists(knowledge_path):
@@ -54,34 +68,14 @@ def read_root():
     return {"status": "ok", "message": "Fitness Assistant API is running"}
 
 
-@app.get("/test-llm")
-def test_llm():
-    """Test endpoint verifying standard LLM generation without RAG."""
-    try:
-        completion = client.chat.completions.create(
-            model=os.getenv("LLM_MODEL", "gemma-4-E4B-it"),
-            messages=[
-                {
-                    "role": "user",
-                    "content": "ขอท่าเวทเทรนนิ่ง 1 ท่าสำหรับคนเจ็บข้อมือ",
-                }
-            ],
-            temperature=0,
-        )
-        return {"response": completion.choices[0].message.content}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 @app.get("/search")
 def search(
     query: str = Query(..., description="The query to search in the knowledge base"),
     top_k: int = Query(default=2, ge=1, le=10, description="Number of chunks to return"),
 ):
     """
-    Vector search endpoint:
-    Embeds the user query, calculates cosine similarity against in-memory chunk
-    embeddings, and returns the top-k relevant chunks with citations.
+    Vector search endpoint from Phase 2:
+    Returns the top-k relevant chunks with citations.
     """
     if not query.strip():
         raise HTTPException(status_code=400, detail="Query cannot be empty.")
@@ -97,22 +91,18 @@ def search(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/rag-query", response_model=RAGQueryResponse)
-def rag_query(request: RAGQueryRequest):
+@app.post("/chat", response_model=ChatResponse)
+def chat_endpoint(request: ChatRequest):
     """
-    End-to-end RAG endpoint:
-    Retrieves relevant knowledge chunks, injects them into the LLM prompt,
-    and returns an answer grounded in domain knowledge with source citations.
+    Phase 3: ReAct Agent Endpoint with Function Calling.
+    Executes run_fitness_agent loop which dynamically searches the knowledge base
+    using search_fitness_knowledge and returns the final synthesized answer.
     """
-    if not request.query.strip():
-        raise HTTPException(status_code=400, detail="Query cannot be empty.")
+    if not request.message.strip():
+        raise HTTPException(status_code=400, detail="Message cannot be empty.")
 
     try:
-        result = generate_rag_response(
-            query=request.query,
-            client=client,
-            top_k=request.top_k,
-        )
-        return RAGQueryResponse(**result)
+        final_answer = run_fitness_agent(user_input=request.message, client=client)
+        return ChatResponse(response=final_answer)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

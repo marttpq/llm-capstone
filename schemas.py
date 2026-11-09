@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, List
 from pydantic import BaseModel, Field
 
 
@@ -28,3 +28,23 @@ class RAGQueryResponse(BaseModel):
     answer: str
     sources: List[SearchResult]
 
+
+class ToolExecutionRecord(BaseModel):
+    tool_name: str = Field(..., description="Name of the tool executed by the agent")
+    arguments: Any = Field(..., description="Input parameters passed to the tool")
+    result: Any = Field(..., description="Execution output from the tool")
+
+
+class AgentChatRequest(BaseModel):
+    message: str = Field(
+        ...,
+        min_length=1,
+        description="User prompt or question for the fitness agent",
+        examples=["ผมหนัก 75 สูง 178 อายุ 28 เพศชาย กิจกรรม moderate คำนวณ TDEE ให้หน่อย"],
+    )
+
+
+class AgentChatResponse(BaseModel):
+    user_message: str
+    reply: str
+    tools_executed: List[ToolExecutionRecord]
