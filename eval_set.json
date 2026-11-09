@@ -1,0 +1,123 @@
+[
+  {
+    "question": "หลักการสำคัญที่สุดในการเพิ่มขนาดกล้ามเนื้อและแรงคืออะไร",
+    "expected_keyword": "Progressive Overload"
+  },
+  {
+    "question": "ถ้าไม่เพิ่มน้ำหนักเหล็ก มีเทคนิคใดที่ช่วยเพิ่มแรงกระตุ้นกล้ามเนื้อได้อีก",
+    "expected_keyword": "Tempo"
+  },
+  {
+    "question": "การผ่อนน้ำหนักลงช้าๆ ควรใช้เวลากี่วินาที",
+    "expected_keyword": "3-4 วินาที"
+  },
+  {
+    "question": "การเพิ่มจำนวนครั้งในการฝึกเรียกว่าอะไร",
+    "expected_keyword": "Reps"
+  },
+  {
+    "question": "การเพิ่มจำนวนเซ็ตในการฝึกเขียนอย่างไรในภาษาอังกฤษ",
+    "expected_keyword": "Sets"
+  },
+  {
+    "question": "ร่างกายจะปรับตัวสร้างสิ่งใดใหม่เมื่อได้รับแรงกระตุ้นที่เพียงพอ",
+    "expected_keyword": "เส้นใยกล้ามเนื้อ"
+  },
+  {
+    "question": "เจ็บข้อมือควรเล่นเครื่อง Machine ท่าไหนเพื่อฝึกกล้ามเนื้ออก",
+    "expected_keyword": "Pec Deck Machine"
+  },
+  {
+    "question": "ท่าบาร์เบลยอดนิยมสำหรับกล้ามเนื้ออกที่ไม่ควรเล่นตอนปวดข้อมือ",
+    "expected_keyword": "Straight Bar Bench Press"
+  },
+  {
+    "question": "คนเจ็บข้อมือควรปรับมุมจับดัมเบลแบบใดเพื่อลดแรงกด",
+    "expected_keyword": "Neutral Grip"
+  },
+  {
+    "question": "อุปกรณ์พยุงข้อมือที่แนะนำสำหรับคนที่มีปัญหาข้อมือคืออะไร",
+    "expected_keyword": "Wrist Wraps"
+  },
+  {
+    "question": "ท่าดันไหล่ด้วยบาร์เบลที่ไม่เหมาะสำหรับผู้ที่มีอาการเจ็บข้อมือ",
+    "expected_keyword": "Barbell Overhead Press"
+  },
+  {
+    "question": "ท่าฝึกอกด้วยเคเบิลที่ช่วยลดแรงเค้นที่ข้อมือคือท่าอะไร",
+    "expected_keyword": "Cable Chest Fly"
+  },
+  {
+    "question": "อาการปวดบริเวณข้อมือมีชื่อภาษาอังกฤษระบุว่าอย่างไร",
+    "expected_keyword": "Wrist Joint Pain"
+  },
+  {
+    "question": "อาการเอ็นข้อศอกอักเสบด้านในมีชื่อเรียกว่าอะไร",
+    "expected_keyword": "Golfer's Elbow"
+  },
+  {
+    "question": "อาการเอ็นข้อศอกอักเสบด้านนอกมีชื่อทางการว่าอย่างไร",
+    "expected_keyword": "Tennis Elbow"
+  },
+  {
+    "question": "ท่าบริหารหลังแขนที่ไม่ควรฝึกช่วงที่ข้อศอกมีอาการอักเสบ",
+    "expected_keyword": "Skull Crushers"
+  },
+  {
+    "question": "ท่าดัมเบลสำหรับหน้าแขนที่ช่วยให้ปลายแขนและข้อศอกหมุนเป็นธรรมชาติ",
+    "expected_keyword": "Dumbbell Hammer Curls"
+  },
+  {
+    "question": "ท่า Triceps Pushdown ด้วยเคเบิลควรใช้หัวต่อแบบใดเพื่อเซฟข้อศอก",
+    "expected_keyword": "Rope"
+  },
+  {
+    "question": "ท่าหน้าแขนด้วยบาร์เบลที่มีน้ำหนักมากที่ควรหลีกเลี่ยงเมื่อเจ็บศอก",
+    "expected_keyword": "Heavy Barbell Curls"
+  },
+  {
+    "question": "อุปกรณ์ยางยืดที่สามารถใช้ทดแทนดัมเบลเมื่อมีอาการเจ็บข้อศอกคืออะไร",
+    "expected_keyword": "Resistance Band"
+  },
+  {
+    "question": "ปริมาณโปรตีนต่อน้ำหนักตัวต่อวันที่แนะนำสำหรับสร้างกล้ามเนื้อคือกี่กรัม",
+    "expected_keyword": "1.6 ถึง 2.2 กรัม"
+  },
+  {
+    "question": "ตัวย่อภาษาอังกฤษของกระบวนการสังเคราะห์โปรตีนในกล้ามเนื้อคืออะไร",
+    "expected_keyword": "MPS"
+  },
+  {
+    "question": "ชื่อเต็มของกระบวนการ MPS ในการสร้างกล้ามเนื้อคืออะไร",
+    "expected_keyword": "Muscle Protein Synthesis"
+  },
+  {
+    "question": "ควรกระจายมื้ออาหารสำหรับรับประทานโปรตีนวันละกี่มื้อ",
+    "expected_keyword": "3-5 มื้อ"
+  },
+  {
+    "question": "ในแต่ละมื้อควรได้รับโปรตีนประมาณกี่กรัมเพื่อกระตุ้น MPS",
+    "expected_keyword": "20-40 กรัม"
+  },
+  {
+    "question": "อกไก่ปรุงสุกปริมาณ 100 กรัมให้โปรตีนประมาณกี่กรัม",
+    "expected_keyword": "30-31 กรัม"
+  },
+  {
+    "question": "สารอาหารสำคัญที่ช่วยบำรุงระบบประสาทที่พบในไข่ไก่คืออะไร",
+    "expected_keyword": "Choline"
+  },
+  {
+    "question": "ไข่ไก่ขนาดมาตรฐาน 1 ฟองให้โปรตีนเฉลี่ยกี่กรัม",
+    "expected_keyword": "6-7 กรัม"
+  },
+  {
+    "question": "คำภาษาอังกฤษสำหรับอกไก่เขียนอย่างไร",
+    "expected_keyword": "Chicken Breast"
+  },
+  {
+    "question": "หากต้องการโปรตีนสูงแต่ต้องการคุมไขมันควรทานสิ่งใดคู่กับไข่ทั้งฟอง",
+    "expected_keyword": "ไข่ขาวต้ม"
+  }
+]
+

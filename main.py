@@ -1,6 +1,7 @@
 import sys
 import json
 import types
+import uuid
 
 # Windows WDAC / AppLocker fallback for jiter binary DLL
 try:
@@ -14,16 +15,18 @@ except ImportError:
     sys.modules["jiter"] = jiter_shim
 
 import os
+from typing import Optional
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 from openai import OpenAI
 from rag import init_knowledge_base, vector_search
 from agent import run_fitness_agent
+from memory import memory_manager
 
 load_dotenv()
 
-app = FastAPI(title="Fitness Assistant API - ReAct Agent with Function Calling")
+app = FastAPI(title="Fitness Assistant API - ReAct Agent with Function Calling & Memory")
 
 # Initialize OpenAI client with environment settings
 client = OpenAI(
@@ -39,10 +42,16 @@ class ChatRequest(BaseModel):
         description="User question or prompt for the fitness agent",
         examples=["เจ็บข้อมือเล่นอกท่าไหนดี"],
     )
+    session_id: Optional[str] = Field(
+        default=None,
+        description="Optional session ID for multi-turn conversations",
+        examples=["session-123"],
+    )
 
 
 class ChatResponse(BaseModel):
     response: str
+    session_id: str
 
 
 @app.on_event("startup")
@@ -94,15 +103,29 @@ def search(
 @app.post("/chat", response_model=ChatResponse)
 def chat_endpoint(request: ChatRequest):
     """
-    Phase 3: ReAct Agent Endpoint with Function Calling.
-    Executes run_fitness_agent loop which dynamically searches the knowledge base
-    using search_fitness_knowledge and returns the final synthesized answer.
+    Phase 3: ReAct Agent Endpoint with Function Calling & Multi-turn Session Memory.
+    Dynamically executes tools (RAG search, TDEE calculation, 1RM estimation)
+    and remembers conversation history across turns.
     """
     if not request.message.strip():
         raise HTTPException(status_code=400, detail="Message cannot be empty.")
 
+    # Assign or keep session_id
+    active_session_id = request.session_id or str(uuid.uuid4())
+
     try:
-        final_answer = run_fitness_agent(user_input=request.message, client=client)
-        return ChatResponse(response=final_answer)
+        final_answer = run_fitness_agent(
+            user_input=request.message,
+            client=client,
+            session_id=active_session_id,
+        )
+        return ChatResponse(response=final_answer, session_id=active_session_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/chat/session/{session_id}")
+def clear_session(session_id: str):
+    """Clears conversation history for a given session."""
+    memory_manager.clear(session_id)
+    return {"status": "cleared", "session_id": session_id}
